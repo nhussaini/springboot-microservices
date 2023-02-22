@@ -5,5 +5,6 @@ import net.javaguides.departmentservice.dto.DepartmentDto;
 public interface DepartmentService {
     //save department
     DepartmentDto saveDepartment(DepartmentDto departmentDto);
+    DepartmentDto getDepartmentByCode(String code);
 
 }
