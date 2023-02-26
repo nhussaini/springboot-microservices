@@ -1,5 +1,6 @@
 package net.javaguides.employeeservice.service.Impl;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.AllArgsConstructor;
 import net.javaguides.employeeservice.dto.APIResponseDto;
 import net.javaguides.employeeservice.dto.DepartmentDto;
@@ -21,7 +22,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
 
     //private RestTemplate restTemplate;
-    //private WebClient webClient;
+    private WebClient webClient;
     private APIClient apiClient;
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -46,6 +47,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return savedEmployeeDto;
     }
 
+    @CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
     @Override
     public APIResponseDto getEmployeeById(Long employeeId) {
         Employee employee = employeeRepository.findById(employeeId).get();
@@ -56,14 +58,14 @@ public class EmployeeServiceImpl implements EmployeeService {
        // DepartmentDto departmentDto = responseEntity.getBody();
 
         //use WebClient to make a call to department service
-//        DepartmentDto departmentDto = webClient.get()
-//                .uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
-//                .retrieve()
-//                .bodyToMono(DepartmentDto.class)
-//                .block();
+        DepartmentDto departmentDto = webClient.get()
+                .uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
+                .retrieve()
+                .bodyToMono(DepartmentDto.class)
+                .block();
 
         //use OpenFeign to make a call to department service
-        DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
+        //DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
 
 
         EmployeeDto employeeDto = new EmployeeDto(
