@@ -1,0 +1,13 @@
+import axios from 'axios';
+
+const EMPLOYEE_Service_BASE_URL = 'http://localhost:1919/api/employees';
+
+const EMPLOYEE_ID = 2;
+
+class EmployeeService {
+  getEmployee() {
+    axios.get(EMPLOYEE_Service_BASE_URL + '/' + EMPLOYEE_ID);
+  }
+}
+
+export default new EmployeeService();
